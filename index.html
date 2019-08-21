@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<!-- This chart has been modified from its original page -->
+	<!-- Copyright by Google Chart, originally from Hybridbooking Report Page which is developed by Arix Wap -->
+	<meta charset="utf-8">
+	<meta name="robots" content="noindex, nofollow">
+	<title>Simple Google Chart</title>
+	<link rel="stylesheet" type="text/css" href="assets/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="assets/w3.css">
+	<link rel="stylesheet" type="text/css" href="assets/ta-spinkit.css">
+</head>
+<body>
+	<div class="w3-row">
+		<div class="w3-container">
+			<div class="w3-panel w3-serif w3-center">
+				<h1 style="letter-spacing: 20px">SIMPLE GOOGLE CHART</h1>
+				<p class="w3-xlarge" style="letter-spacing: 10px">"try to change the table value"</p>
+				<hr/>
+			</div>
+		</div>
+		<div class="w3-container">
+			<div class="w3-panel w3-yellow w3-display-container w3-animate-opacity" id="validationMessage" style="display: none; margin-top: 0">
+				<span onclick="this.parentElement.style.display='none'"
+				class="w3-button w3-large w3-display-topright w3-hover-yellow">&times;</span>
+				<h3>Please use valid number</h3>
+			</div>
+		</div>
+		<form action="#" id="formTable">
+			<div class="w3-quarter w3-container">
+				<table class="w3-table w3-border w3-bordered hidden-content" id="tableSales" style="display: none;">
+					<tbody>
+						<tr class="header w3-amber w3-text-white">
+							<th>Month</th>
+							<th class="w3-right-align" width="150">Sales</th>
+						</tr>
+						<tr class="sales-list">
+							<td class="month-name">January</td>
+							<td class="month-sales">
+								<div class="w3-col" style="width: 20px"><span>$</span></div>
+								<div class="w3-rest">
+									 <input class="w3-input w3-hover-light-gray w3-border-0 w3-right-align input-sales" style="padding: 0;">
+								</div>
+							</td>
+						</tr>
+						<tr class="footer w3-amber w3-text-white"><td colspan="2"></td></tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="w3-threequarter w3-container">
+				<span class="hidden-content" style="display: none; letter-spacing: 10px">
+					<button type="submit" class="w3-button w3-amber w3-text-white w3-border">SUBMIT</button>
+					<button type="button" class="w3-button w3-blue w3-text-white w3-border random-button">RANDOM</button>
+					<select class="w3-select w3-border" name="charttype" style="width: 180px; padding-top: 7px; padding-left: 10px" onchange="$('#formTable').trigger('submit')">
+						<option value="1">LINE</option>
+						<option value="2">BAR</option>
+					</select>
+				</span>
+				<div class="loading-animation" style="padding-top: 100px; display: none;">
+					<div class="sk sk-2" color="#1B77C0" speed="1"></div>
+				</div>
+				<div class="embed-responsive embed-responsive-16by9 chart-container" style="display: none;">
+					<div class="embed-responsive-item" id="theChart"></div>
+				</div>
+			</div>
+		</form>
+		<div class="w3-container" id="internetConnectMessage">
+			<div class="w3-panel w3-center">
+				<h4 style="letter-spacing: 5px">NEED INTERNET CONNECTION TO WORK ;)</h4>
+			</div>
+		</div>
+	</div>
+</body>
+<!-------------------------SCRIPT SECTION--------------------------------->
+<script type="text/javascript" src="assets/jquery.min.js"></script>
+<script type="text/javascript" src="assets/ta-spinkit.js" id="taSpinkitJS"></script>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
+	var dataSales = getRandomSales();
+	// load google chart
+	google.charts.load('current', {'packages':['corechart']});
+	google.charts.setOnLoadCallback(function(){setChart(dataSales);});
+	$(document).ready(function(){
+		setSalesTable(dataSales);
+	})
+	$("#formTable").submit(function(){
+		var formData = $(this).find('input.input-sales').serializeArray();
+		var dataSales = {};
+		for (var i in formData) {
+			value = formData[i]['value'];
+			if ($.isNumeric(value)==false) {
+				$("#validationMessage").show();
+				return false;
+			}
+			month = formData[i]['name'];
+			dataSales[month] = parseInt(value);
+		}
+		var chartType = $(this).find('select[name="charttype"]').val();
+		loadingAnimated();
+		setChart(dataSales, chartType);
+		$("#validationMessage").hide();
+		return false;
+	})
+	$('.random-button').click(function(){
+		var dataSales = getRandomSales();
+		for (var i in dataSales) {
+			$('#formTable tr.sales-list input[name="'+i+'"]').val(dataSales[i]);
+		}
+		$('#formTable').trigger('submit');
+	})
+	function loadingAnimated(revert) {
+		$("#internetConnectMessage").hide();
+		if(revert===true) {
+			$('.chart-container').show();
+			$(".loading-animation").hide();
+		} else {
+			$('.chart-container').hide();
+			$(".loading-animation").show();
+		}
+	}
+	function getRandomSales() {
+		var min = 1000;
+		var max = 100;
+		var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+		var dataSales = {};
+		for (var i in months) {
+			number = (Math.floor(Math.random() * (+max - +min)) + +min) * 100;
+			month = months[i];
+			dataSales[month] = number;
+		}
+		return dataSales;
+	}
+	function setSalesTable(dataSales) {
+		loadingAnimated();
+		var table = $("#tableSales tr.sales-list").first().clone();
+		$("#tableSales tr.sales-list").remove();
+		var html = "";
+		for (var i in dataSales) {
+			temp = table;
+			temp.find(".month-name").html(i);
+			temp.find(".month-sales input").attr({"value" : dataSales[i], "name" : i});
+			html += '<tr class="sales-list">'+temp.html()+'<tr>';
+		}
+		$("#tableSales tr.header").after(html);
+		$(".hidden-content").show();
+	}
+	function setChart(param, chartType) {
+		setTimeout(function() {
+			var data = new google.visualization.DataTable();
+			var dataRowsArray = [];
+			var maxNumber = 10;
+			data.addColumn('string', 'Year');
+			data.addColumn('number', 'Sales');
+			for(var i in param){
+				var dataValue = [i, param[i]];
+				dataRowsArray.push(dataValue);
+				if(param[i]>maxNumber) maxNumber = param[i];
+			}
+			data.addRows(dataRowsArray);
+			var options = {
+				vAxis: {
+					format: 'decimal',
+					minValue: 0,
+					maxValue: maxNumber,
+					gridlines: {count: -1},
+					textStyle: {fontSize: 12}
+				},
+				hAxis: {
+					textStyle: {fontSize: 11}
+				},
+				chartArea: {
+					width: '80%',
+					heigth: '100%'
+				},
+				colors: ['#337AB7'],
+				legend: {position: 'none'},
+				areaOpacity: 0.0
+			};
+			loadingAnimated(true);
+			if(chartType==2) {
+				var chart = new google.visualization.ColumnChart($("#theChart")[0]);
+			} else {
+				var chart = new google.visualization.AreaChart($("#theChart")[0]);
+			}
+			chart.draw(data, options);
+		}, 500)
+	}
+</script>
+<!---------------------END OF - SCRIPT SECTION---------------------------->
+</html>

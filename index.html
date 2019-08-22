@@ -70,121 +70,121 @@
 			</div>
 		</div>
 	</div>
-</body>
-<!-------------------------SCRIPT SECTION--------------------------------->
-<script type="text/javascript" src="assets/jquery.min.js"></script>
-<script type="text/javascript" src="assets/ta-spinkit.js" id="taSpinkitJS"></script>
-<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-<script type="text/javascript">
-	var dataSales = getRandomSales();
-	// load google chart
-	google.charts.load('current', {'packages':['corechart']});
-	google.charts.setOnLoadCallback(function(){setChart(dataSales);});
-	$(document).ready(function(){
-		setSalesTable(dataSales);
-	})
-	$("#formTable").submit(function(){
-		var formData = $(this).find('input.input-sales').serializeArray();
-		var dataSales = {};
-		for (var i in formData) {
-			value = formData[i]['value'];
-			if ($.isNumeric(value)==false) {
-				$("#validationMessage").show();
-				return false;
-			}
-			month = formData[i]['name'];
-			dataSales[month] = parseInt(value);
-		}
-		var chartType = $(this).find('select[name="charttype"]').val();
-		loadingAnimated();
-		setChart(dataSales, chartType);
-		$("#validationMessage").hide();
-		return false;
-	})
-	$('.random-button').click(function(){
+	<!-- Script Section -->
+	<script type="text/javascript" src="assets/jquery.min.js"></script>
+	<script type="text/javascript" src="assets/ta-spinkit.js" id="taSpinkitJS"></script>
+	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+	<script type="text/javascript">
 		var dataSales = getRandomSales();
-		for (var i in dataSales) {
-			$('#formTable tr.sales-list input[name="'+i+'"]').val(dataSales[i]);
-		}
-		$('#formTable').trigger('submit');
-	})
-	function loadingAnimated(revert) {
-		$("#internetConnectMessage").hide();
-		if(revert===true) {
-			$('.chart-container').show();
-			$(".loading-animation").hide();
-		} else {
-			$('.chart-container').hide();
-			$(".loading-animation").show();
-		}
-	}
-	function getRandomSales() {
-		var min = 1000;
-		var max = 100;
-		var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-		var dataSales = {};
-		for (var i in months) {
-			number = (Math.floor(Math.random() * (+max - +min)) + +min) * 100;
-			month = months[i];
-			dataSales[month] = number;
-		}
-		return dataSales;
-	}
-	function setSalesTable(dataSales) {
-		loadingAnimated();
-		var table = $("#tableSales tr.sales-list").first().clone();
-		$("#tableSales tr.sales-list").remove();
-		var html = "";
-		for (var i in dataSales) {
-			temp = table;
-			temp.find(".month-name").html(i);
-			temp.find(".month-sales input").attr({"value" : dataSales[i], "name" : i});
-			html += '<tr class="sales-list">'+temp.html()+'<tr>';
-		}
-		$("#tableSales tr.header").after(html);
-		$(".hidden-content").show();
-	}
-	function setChart(param, chartType) {
-		setTimeout(function() {
-			var data = new google.visualization.DataTable();
-			var dataRowsArray = [];
-			var maxNumber = 10;
-			data.addColumn('string', 'Year');
-			data.addColumn('number', 'Sales');
-			for(var i in param){
-				var dataValue = [i, param[i]];
-				dataRowsArray.push(dataValue);
-				if(param[i]>maxNumber) maxNumber = param[i];
+		// load google chart
+		google.charts.load('current', {'packages':['corechart']});
+		google.charts.setOnLoadCallback(function(){setChart(dataSales);});
+		$(document).ready(function(){
+			setSalesTable(dataSales);
+		})
+		$("#formTable").submit(function(){
+			var formData = $(this).find('input.input-sales').serializeArray();
+			var dataSales = {};
+			for (var i in formData) {
+				value = formData[i]['value'];
+				if ($.isNumeric(value)==false) {
+					$("#validationMessage").show();
+					return false;
+				}
+				month = formData[i]['name'];
+				dataSales[month] = parseInt(value);
 			}
-			data.addRows(dataRowsArray);
-			var options = {
-				vAxis: {
-					format: 'decimal',
-					minValue: 0,
-					maxValue: maxNumber,
-					gridlines: {count: -1},
-					textStyle: {fontSize: 12}
-				},
-				hAxis: {
-					textStyle: {fontSize: 11}
-				},
-				chartArea: {
-					width: '80%',
-					heigth: '100%'
-				},
-				colors: ['#337AB7'],
-				legend: {position: 'none'},
-				areaOpacity: 0.0
-			};
-			loadingAnimated(true);
-			if(chartType==2) {
-				var chart = new google.visualization.ColumnChart($("#theChart")[0]);
+			var chartType = $(this).find('select[name="charttype"]').val();
+			loadingAnimated();
+			setChart(dataSales, chartType);
+			$("#validationMessage").hide();
+			return false;
+		})
+		$('.random-button').click(function(){
+			var dataSales = getRandomSales();
+			for (var i in dataSales) {
+				$('#formTable tr.sales-list input[name="'+i+'"]').val(dataSales[i]);
+			}
+			$('#formTable').trigger('submit');
+		})
+		function loadingAnimated(revert) {
+			$("#internetConnectMessage").hide();
+			if(revert===true) {
+				$('.chart-container').show();
+				$(".loading-animation").hide();
 			} else {
-				var chart = new google.visualization.AreaChart($("#theChart")[0]);
+				$('.chart-container').hide();
+				$(".loading-animation").show();
 			}
-			chart.draw(data, options);
-		}, 500)
-	}
-</script>
-<!---------------------END OF - SCRIPT SECTION---------------------------->
+		}
+		function getRandomSales() {
+			var min = 1000;
+			var max = 100;
+			var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+			var dataSales = {};
+			for (var i in months) {
+				number = (Math.floor(Math.random() * (+max - +min)) + +min) * 100;
+				month = months[i];
+				dataSales[month] = number;
+			}
+			return dataSales;
+		}
+		function setSalesTable(dataSales) {
+			loadingAnimated();
+			var table = $("#tableSales tr.sales-list").first().clone();
+			$("#tableSales tr.sales-list").remove();
+			var html = "";
+			for (var i in dataSales) {
+				temp = table;
+				temp.find(".month-name").html(i);
+				temp.find(".month-sales input").attr({"value" : dataSales[i], "name" : i});
+				html += '<tr class="sales-list">'+temp.html()+'<tr>';
+			}
+			$("#tableSales tr.header").after(html);
+			$(".hidden-content").show();
+		}
+		function setChart(param, chartType) {
+			setTimeout(function() {
+				var data = new google.visualization.DataTable();
+				var dataRowsArray = [];
+				var maxNumber = 10;
+				data.addColumn('string', 'Year');
+				data.addColumn('number', 'Sales');
+				for(var i in param){
+					var dataValue = [i, param[i]];
+					dataRowsArray.push(dataValue);
+					if(param[i]>maxNumber) maxNumber = param[i];
+				}
+				data.addRows(dataRowsArray);
+				var options = {
+					vAxis: {
+						format: 'decimal',
+						minValue: 0,
+						maxValue: maxNumber,
+						gridlines: {count: -1},
+						textStyle: {fontSize: 12}
+					},
+					hAxis: {
+						textStyle: {fontSize: 11}
+					},
+					chartArea: {
+						width: '80%',
+						heigth: '100%'
+					},
+					colors: ['#337AB7'],
+					legend: {position: 'none'},
+					areaOpacity: 0.0
+				};
+				loadingAnimated(true);
+				if(chartType==2) {
+					var chart = new google.visualization.ColumnChart($("#theChart")[0]);
+				} else {
+					var chart = new google.visualization.AreaChart($("#theChart")[0]);
+				}
+				chart.draw(data, options);
+			}, 500)
+		}
+	</script>
+	<!-- End of - Script Section -->
+</body>
 </html>
